@@ -15,15 +15,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct uarray_entry_s {
     volatile sig_atomic_t used;
     void* item;
 } uarray_entry_st;
 
 struct uarray_s {
     pthread_rwlock_t lock;
-    int maxlen;
-    uarray_entry_st* data;
+    int max_len;
+    uarray_entry_st* entries;
 };
 
 int uarray_init(uarray_st** ua, int max_len) {
@@ -35,38 +35,39 @@ int uarray_init(uarray_st** ua, int max_len) {
 
     *ua = uarray;
 
-    uarray->maxlen = max_len;
-    uarray->data = calloc(max_len, sizeof(uarray_entry_st));
+    uarray->max_len = max_len;
+    uarray->entries = calloc(max_len, sizeof(uarray_entry_st));
 
     for (int ii = 0; ii < max_len; ii++) {
-        uarray->data[ii].used = 0;
-        uarray->data[ii].item = NULL;
+        uarray->entries[ii].used = 0;
+        uarray->entries[ii].item = NULL;
     }
 
     if ((errno = pthread_rwlock_init(&uarray->lock, NULL))) {
         return -1;
     }
+
     return 0;
 }
 
 int uarray_deinit(uarray_st* ua) {
     int res = 0;
-    for (int ii = 0; ii < ua->maxlen; ii++) {
-        ua->data[ii].used = 0;
-        ua->data[ii].item = NULL;
+    for (int ii = 0; ii < ua->max_len; ii++) {
+        ua->entries[ii].used = 0;
+        ua->entries[ii].item = NULL;
     }
     if ((errno = pthread_rwlock_destroy(&ua->lock))) {
         res = -1;
     }
-    free(ua->data);
+    free(ua->entries);
     free(ua);
     return res;
 }
 
 int uarray_clear_all(uarray_st* ua) {
     pthread_rwlock_wrlock(&ua->lock);
-    for (int ii = 0; ii < ua->maxlen; ii++) {
-        ua->data[ii].used = 0;
+    for (int ii = 0; ii < ua->max_len; ii++) {
+        ua->entries[ii].used = 0;
     }
     pthread_rwlock_unlock(&ua->lock);
 }
@@ -74,12 +75,12 @@ int uarray_clear_all(uarray_st* ua) {
 int uarray_add(uarray_st* ua, void* item) {
     int res = 0;
     pthread_rwlock_wrlock(&ua->lock);
-    for (int ii = 0; ii < ua->maxlen; ii++) {
-        if (!ua->data[ii].used) {
-            ua->data[ii].used = 1;
-            ua->data[ii].item = item;
+    for (int ii = 0; ii < ua->max_len; ii++) {
+        if (!ua->entries[ii].used) {
+            ua->entries[ii].used = 1;
+            ua->entries[ii].item = item;
             break;
-        } else if (ii == ua->maxlen - 1) {
+        } else if (ii == ua->max_len - 1) {
             /* List full */
             res = -1;
             break;
@@ -92,8 +93,8 @@ int uarray_add(uarray_st* ua, void* item) {
 int uarray_edit(uarray_st* ua, int index, void* item) {
     int res = 0;
     pthread_rwlock_wrlock(&ua->lock);
-    if (ua->data[index].used) {
-        ua->data[index].item = item;
+    if (ua->entries[index].used) {
+        ua->entries[index].item = item;
     } else {
         /* Not found */
         res = -1;
@@ -105,8 +106,8 @@ int uarray_edit(uarray_st* ua, int index, void* item) {
 int uarray_delete(uarray_st* ua, int index) {
     int res = 0;
     pthread_rwlock_wrlock(&ua->lock);
-    if (ua->data[index].used) {
-        ua->data[index].used = 0;
+    if (ua->entries[index].used) {
+        ua->entries[index].used = 0;
         res = 1;
     }
     pthread_rwlock_unlock(&ua->lock);
@@ -116,8 +117,8 @@ int uarray_delete(uarray_st* ua, int index) {
 void* uarray_read(uarray_st* ua, int index) {
     void* res;
     pthread_rwlock_rdlock(&ua->lock);
-    if (ua->data[index].used) {
-        res = ua->data[index].item;
+    if (ua->entries[index].used) {
+        res = ua->entries[index].item;
     } else {
         /* Not found */
         res = NULL;
@@ -129,8 +130,8 @@ void* uarray_read(uarray_st* ua, int index) {
 int uarray_used_len(uarray_st* ua) {
     int res = 0;
     pthread_rwlock_rdlock(&ua->lock);
-    for (int ii = 0; ii < ua->maxlen; ii++) {
-        if (ua->data[ii].used)
+    for (int ii = 0; ii < ua->max_len; ii++) {
+        if (ua->entries[ii].used)
             res++;
     }
     pthread_rwlock_unlock(&ua->lock);
@@ -138,14 +139,14 @@ int uarray_used_len(uarray_st* ua) {
 }
 
 int uarray_max_len(uarray_st* ua) {
-    return ua->maxlen;
+    return ua->max_len;
 }
 
 void uarray_used_idxstr(uarray_st* ua, char* buffer) {
     int idx = 0;
     pthread_rwlock_rdlock(&ua->lock);
-    for (int ii = 0; ii < ua->maxlen; ii++) {
-        if (ua->data[ii].used) {
+    for (int ii = 0; ii < ua->max_len; ii++) {
+        if (ua->entries[ii].used) {
             sprintf(buffer + idx, "%d,", ii);
             idx = strlen(buffer);
         }
