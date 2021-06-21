@@ -14,7 +14,7 @@ int main() {
 }
 
 static int test() {
-    uarray_t* uarray = NULL;
+    uarray_st* uarray = NULL;
     int uarray_cap = 2;
 
     char buffer[uarray_cap * (2 + 1)];
