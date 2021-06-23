@@ -14,7 +14,7 @@ typedef struct uarray_s uarray_st;
 int uarray_create(uarray_st** ua, int max_len);
 int uarray_destroy(uarray_st* ua);
 
-int uarray_clear_all(uarray_st* ua);
+void uarray_clear_all(uarray_st* ua);
 
 int uarray_add(uarray_st* ua, void* item);
 int uarray_edit(uarray_st* ua, int index, void* item);

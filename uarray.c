@@ -64,7 +64,7 @@ int uarray_destroy(uarray_st* ua) {
     return res;
 }
 
-int uarray_clear_all(uarray_st* ua) {
+void uarray_clear_all(uarray_st* ua) {
     pthread_rwlock_wrlock(&ua->lock);
     for (int ii = 0; ii < ua->max_len; ii++) {
         ua->entries[ii].used = 0;
