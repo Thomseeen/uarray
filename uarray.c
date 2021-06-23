@@ -53,6 +53,9 @@ int uarray_create(uarray_st** ua, int max_len) {
 int uarray_destroy(uarray_st* ua) {
     int res = 0;
     for (int ii = 0; ii < ua->max_len; ii++) {
+        if (ua->entries[ii].used) {
+            free(ua->entries[ii].item);
+        }
         ua->entries[ii].used = 0;
         ua->entries[ii].item = NULL;
     }
@@ -67,6 +70,9 @@ int uarray_destroy(uarray_st* ua) {
 void uarray_clear_all(uarray_st* ua) {
     pthread_rwlock_wrlock(&ua->lock);
     for (int ii = 0; ii < ua->max_len; ii++) {
+        if (ua->entries[ii].used) {
+            free(ua->entries[ii].item);
+        }
         ua->entries[ii].used = 0;
     }
     pthread_rwlock_unlock(&ua->lock);
@@ -95,6 +101,7 @@ int uarray_edit(uarray_st* ua, int index, void* item) {
     int res = 0;
     pthread_rwlock_wrlock(&ua->lock);
     if (ua->entries[index].used) {
+        free(ua->entries[index].item);
         ua->entries[index].item = item;
         res = index;
     } else {
@@ -109,6 +116,7 @@ int uarray_delete(uarray_st* ua, int index) {
     int res = 0;
     pthread_rwlock_wrlock(&ua->lock);
     if (ua->entries[index].used) {
+        free(ua->entries[index].item);
         ua->entries[index].used = 0;
         res = 1;
     }

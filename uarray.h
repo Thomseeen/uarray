@@ -19,20 +19,16 @@ typedef struct uarray_s uarray_st;
 int uarray_create(uarray_st** ua, int max_len);
 
 /*
- * Destroys a uarray or frees it's resources.
- *
- * Any stored data pointers should be retrieved beforehand
- * and be freed as needed.
+ * Destroys a uarray and frees it's resources. And data
+ * at the item pointers gets freed too.
  *
  * Returns 0 on succes or -1 on failure.
  */
 int uarray_destroy(uarray_st* ua);
 
 /*
- * Markes all entries as unused.
- *
- * Any stored data pointers should be retrieved beforehand
- * and be freed as needed.
+ * Markes all entries as unused and frees the data at the
+ * item pointers where necessary.
  */
 void uarray_clear_all(uarray_st* ua);
 
@@ -44,14 +40,14 @@ void uarray_clear_all(uarray_st* ua);
 int uarray_add(uarray_st* ua, void* item);
 
 /*
- * Edits an entry in the uarray.
+ * Edits an entry in the uarray and frees the original item pointers data.
  *
  * Returns the index of the edited element or -1 on failure.
  */
 int uarray_edit(uarray_st* ua, int index, void* item);
 
 /*
- * Deletes an entry from the uarray.
+ * Deletes an entry from the uarray and frees the item pointers data.
  *
  * Returns the amount of elements that have been actually deleted.
  */
