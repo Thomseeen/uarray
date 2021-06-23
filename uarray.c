@@ -26,7 +26,7 @@ struct uarray_s {
     uarray_entry_st* entries;
 };
 
-int uarray_init(uarray_st** ua, int max_len) {
+int uarray_create(uarray_st** ua, int max_len) {
     uarray_st* uarray;
     uarray = calloc(1, sizeof(uarray_st));
     if (!uarray) {
@@ -50,7 +50,7 @@ int uarray_init(uarray_st** ua, int max_len) {
     return 0;
 }
 
-int uarray_deinit(uarray_st* ua) {
+int uarray_destroy(uarray_st* ua) {
     int res = 0;
     for (int ii = 0; ii < ua->max_len; ii++) {
         ua->entries[ii].used = 0;

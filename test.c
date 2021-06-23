@@ -19,7 +19,7 @@ static int test() {
 
     char buffer[uarray_cap * (2 + 1)];
 
-    if (uarray_init(&uarray, uarray_cap) != 0) {
+    if (uarray_create(&uarray, uarray_cap) != 0) {
         printf("failed to init\n");
         return -1;
     }
@@ -80,5 +80,9 @@ static int test() {
     uarray_used_idxstr(uarray, buffer);
     printf("current idexes: %s\n", buffer);
 
+    if (uarray_destroy(uarray) != 0) {
+        printf("failed to destroy\n");
+        return -1;
+    }
     return 0;
 }

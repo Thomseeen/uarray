@@ -11,8 +11,8 @@
 
 typedef struct uarray_s uarray_st;
 
-int uarray_init(uarray_st** ua, int max_len);
-int uarray_deinit(uarray_st* ua);
+int uarray_create(uarray_st** ua, int max_len);
+int uarray_destroy(uarray_st* ua);
 
 int uarray_clear_all(uarray_st* ua);
 
