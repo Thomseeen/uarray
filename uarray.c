@@ -79,6 +79,7 @@ int uarray_add(uarray_st* ua, void* item) {
         if (!ua->entries[ii].used) {
             ua->entries[ii].used = 1;
             ua->entries[ii].item = item;
+            res = ii;
             break;
         } else if (ii == ua->max_len - 1) {
             /* List full */
@@ -95,6 +96,7 @@ int uarray_edit(uarray_st* ua, int index, void* item) {
     pthread_rwlock_wrlock(&ua->lock);
     if (ua->entries[index].used) {
         ua->entries[index].item = item;
+        res = index;
     } else {
         /* Not found */
         res = -1;
