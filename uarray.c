@@ -28,7 +28,7 @@ struct uarray_s {
 
 int uarray_create(uarray_st** ua, int max_len) {
     uarray_st* uarray;
-    uarray = calloc(1, sizeof(uarray_st));
+    uarray = malloc(sizeof(uarray_st));
     if (!uarray) {
         return -1;
     }
@@ -37,11 +37,6 @@ int uarray_create(uarray_st** ua, int max_len) {
 
     uarray->max_len = max_len;
     uarray->entries = calloc(max_len, sizeof(uarray_entry_st));
-
-    for (int ii = 0; ii < max_len; ii++) {
-        uarray->entries[ii].used = 0;
-        uarray->entries[ii].item = NULL;
-    }
 
     if ((errno = pthread_rwlock_init(&uarray->lock, NULL))) {
         return -1;
