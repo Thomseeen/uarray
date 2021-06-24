@@ -65,7 +65,7 @@ void* uarray_read(uarray_st* ua, int index);
  *
  * Returns the amount of pointers found.
  */
-int uarray_get_used(uarray_st* ua, void* items);
+int uarray_get_used(uarray_st* ua, void** items);
 
 /*
  * Returns the amount of used elements in the uarray.
