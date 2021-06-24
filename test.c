@@ -39,12 +39,12 @@ static int test() {
         return -1;
     }
 
-    if (uarray_used_len(uarray) != 2) {
+    if (uarray_get_used_len(uarray) != 2) {
         printf("len is erroneous at 2 items\n");
         return -1;
     }
 
-    uarray_used_idxstr(uarray, buffer);
+    uarray_get_used_idxstr(uarray, buffer);
     printf("current idexes: %s\n", buffer);
 
     if (uarray_delete(uarray, 1) != 1) {
@@ -72,12 +72,12 @@ static int test() {
         return -1;
     }
 
-    if (uarray_used_len(uarray) != 1) {
+    if (uarray_get_used_len(uarray) != 1) {
         printf("len is erroneous at 1 item\n");
         return -1;
     }
 
-    uarray_used_idxstr(uarray, buffer);
+    uarray_get_used_idxstr(uarray, buffer);
     printf("current idexes: %s\n", buffer);
 
     if (uarray_destroy(uarray) != 0) {

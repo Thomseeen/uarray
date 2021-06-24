@@ -61,18 +61,25 @@ int uarray_delete(uarray_st* ua, int index);
 void* uarray_read(uarray_st* ua, int index);
 
 /*
+ * Get all used data pointers from the uarray.
+ *
+ * Returns the amount of pointers found.
+ */
+int uarray_get_used(uarray_st* ua, void* items);
+
+/*
  * Returns the amount of used elements in the uarray.
  */
-int uarray_used_len(uarray_st* ua);
+int uarray_get_used_len(uarray_st* ua);
 
 /*
  * Returns the maximum amount of elements allowed in the uarray.
  */
-int uarray_max_len(uarray_st* ua);
+int uarray_get_max_len(uarray_st* ua);
 
 /*
  * Returns a comma seperated string of indices describing the used entries.
  */
-void uarray_used_idxstr(uarray_st* ua, char* buffer);
+void uarray_get_used_idxstr(uarray_st* ua, char* buffer);
 
 #endif /* UARRAY_H */

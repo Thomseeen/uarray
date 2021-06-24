@@ -137,7 +137,21 @@ void* uarray_read(uarray_st* ua, int index) {
     return res;
 }
 
-int uarray_used_len(uarray_st* ua) {
+int uarray_get_used(uarray_st* ua, void* items) {
+    int res = 0;
+    pthread_rwlock_rdlock(&ua->lock);
+    for (int ii = 0; ii < ua->max_len; ii++) {
+        if (ua->entries[ii].used) {
+            void* item = items + res;
+            item = &ua->entries[ii].item;
+            res++;
+        }
+    }
+    pthread_rwlock_unlock(&ua->lock);
+    return res;
+}
+
+int uarray_get_used_len(uarray_st* ua) {
     int res = 0;
     pthread_rwlock_rdlock(&ua->lock);
     for (int ii = 0; ii < ua->max_len; ii++) {
@@ -148,11 +162,11 @@ int uarray_used_len(uarray_st* ua) {
     return res;
 }
 
-int uarray_max_len(uarray_st* ua) {
+int uarray_get_max_len(uarray_st* ua) {
     return ua->max_len;
 }
 
-void uarray_used_idxstr(uarray_st* ua, char* buffer) {
+void uarray_get_used_idxstr(uarray_st* ua, char* buffer) {
     int idx = 0;
     pthread_rwlock_rdlock(&ua->lock);
     for (int ii = 0; ii < ua->max_len; ii++) {
