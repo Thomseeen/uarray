@@ -137,8 +137,7 @@ int uarray_get_used(uarray_st* ua, void** items) {
     pthread_rwlock_rdlock(&ua->lock);
     for (int ii = 0; ii < ua->max_len; ii++) {
         if (ua->entries[ii].used) {
-            void** item = items + res;
-            *item = &ua->entries[ii].item;
+            items[res] = ua->entries[ii].item;
             res++;
         }
     }
